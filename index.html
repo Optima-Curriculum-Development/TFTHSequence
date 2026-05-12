@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Put the Story Back — The Fun They Had</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,500&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+
+:root{
+  --bg:#09080a;
+  --surface:#110f14;
+  --card:#1a1720;
+  --card2:#221f2c;
+  --rule:rgba(255,255,255,0.07);
+  --rule2:rgba(255,255,255,0.13);
+  --rule3:rgba(255,255,255,0.22);
+  --ink:#ede5f8;
+  --ink2:#9d94b0;
+  --ink3:#5a5268;
+  --purple:#c4a8ff;
+  --purple2:#8b6fd4;
+  --purple-bg:rgba(196,168,255,0.07);
+  --purple-border:rgba(196,168,255,0.2);
+  --gold:#e8c87a;
+  --gold-bg:rgba(232,200,122,0.07);
+  --gold-border:rgba(232,200,122,0.22);
+  --green:#7de8a0;
+  --green-bg:rgba(125,232,160,0.08);
+  --red:#e87d7d;
+  --red-bg:rgba(232,125,125,0.08);
+  --slot-bg:#141218;
+  --slot-border:rgba(196,168,255,0.15);
+  --drag-shadow:0 8px 32px rgba(0,0,0,0.6);
+}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  display:flex;flex-direction:column;
+  height:100%;overflow:hidden;
+}
+
+.screen{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;transition:opacity 0.45s ease;overflow:hidden;
+}
+.screen.active{opacity:1;pointer-events:all;position:relative;}
+
+/* ══════════════════════════════
+   SCREEN 0 — INTRO
+══════════════════════════════ */
+#s0{
+  background:var(--bg);
+  align-items:center;justify-content:center;
+  overflow-y:auto;padding:40px 24px;
+}
+.intro-wrap{max-width:620px;width:100%;}
+
+.game-kicker{
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--purple);margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.game-kicker::before{content:'';width:28px;height:1px;background:var(--purple);opacity:0.5;}
+
+.game-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(38px,7vw,72px);
+  font-weight:900;line-height:0.95;
+  letter-spacing:-0.02em;margin-bottom:8px;
+}
+.game-title em{
+  font-style:italic;font-weight:600;
+  color:var(--ink2);font-size:0.62em;
+  display:block;margin-top:6px;letter-spacing:0;
+}
+
+.intro-body{
+  font-size:15px;color:var(--ink2);line-height:1.75;
+  margin:24px 0;border-left:2px solid var(--purple2);
+  padding-left:18px;
+}
+.intro-body strong{color:var(--ink);}
+
+.how-cards{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;margin-bottom:28px;
+}
+.how-card{
+  background:var(--card);border:1px solid var(--rule2);
+  border-radius:10px;padding:14px 16px;
+}
+.how-n{
+  font-family:'Playfair Display',serif;
+  font-size:24px;font-weight:900;
+  color:var(--purple);opacity:0.35;
+  line-height:1;margin-bottom:6px;
+}
+.how-text{font-size:13px;color:var(--ink2);line-height:1.6;}
+.how-text strong{color:var(--ink);}
+
+.para-count-strip{
+  display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap;
+  align-items:center;
+}
+.para-count-strip span{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--ink3);letter-spacing:0.06em;margin-right:6px;
+}
+.para-pip{
+  width:28px;height:4px;border-radius:2px;
+  background:var(--rule2);
+}
+
+.start-btn{
+  width:100%;padding:17px;
+  background:var(--purple);color:#09080a;
+  font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+  border:none;border-radius:10px;cursor:pointer;
+  transition:all 0.2s;letter-spacing:0.01em;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.start-btn:hover{background:#d4b8ff;transform:translateY(-2px);}
+.start-btn .arr{font-size:20px;transition:transform 0.2s;}
+.start-btn:hover .arr{transform:translateX(4px);}
+
+/* ══════════════════════════════
+   SCREEN 1 — SEQUENCER
+══════════════════════════════ */
+#s1{background:var(--bg);flex-direction:column;}
+
+.seq-top{
+  background:var(--surface);border-bottom:1px solid var(--rule);
+  padding:10px 20px;display:flex;align-items:center;
+  justify-content:space-between;flex-shrink:0;gap:12px;
+}
+.seq-top-left{display:flex;flex-direction:column;gap:2px;}
+.seq-top-title{
+  font-family:'Playfair Display',serif;
+  font-size:15px;font-weight:700;
+}
+.seq-top-sub{
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);
+}
+.seq-top-right{display:flex;align-items:center;gap:12px;}
+.back-btn{
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.08em;text-transform:uppercase;
+  padding:6px 14px;border-radius:6px;
+  border:1px solid var(--rule2);background:transparent;
+  color:var(--ink3);cursor:pointer;transition:all 0.2s;
+}
+.back-btn:hover{background:var(--card);color:var(--ink2);}
+
+.placed-counter{
+  font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--ink3);display:flex;align-items:center;gap:8px;
+}
+.placed-pips{display:flex;gap:4px;}
+.placed-pip{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--rule2);transition:background 0.35s;
+}
+.placed-pip.filled{background:var(--purple);}
+
+.check-btn{
+  padding:8px 18px;
+  background:var(--purple-bg);color:var(--purple);
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  border:1px solid var(--purple-border);border-radius:8px;
+  cursor:pointer;transition:all 0.2s;
+  opacity:0.4;pointer-events:none;
+}
+.check-btn.ready{opacity:1;pointer-events:all;}
+.check-btn.ready:hover{background:rgba(196,168,255,0.14);}
+
+/* two-panel layout */
+.seq-body{
+  flex:1;display:grid;
+  grid-template-columns:1fr 1fr;
+  overflow:hidden;min-height:0;
+  gap:0;
+}
+
+/* LEFT — card bank */
+.bank-panel{
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--rule);
+  overflow:hidden;
+}
+.panel-header{
+  padding:12px 18px 10px;
+  border-bottom:1px solid var(--rule);
+  flex-shrink:0;
+}
+.panel-header-title{
+  font-size:13px;font-weight:500;margin-bottom:2px;
+}
+.panel-header-sub{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--ink3);letter-spacing:0.06em;
+}
+
+.bank-scroll{
+  flex:1;overflow-y:auto;
+  padding:14px 14px;
+  display:flex;flex-direction:column;gap:10px;
+}
+
+/* RIGHT — sequence slots */
+.slots-panel{
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.slots-scroll{
+  flex:1;overflow-y:auto;
+  padding:14px 14px;
+  display:flex;flex-direction:column;gap:8px;
+}
+
+/* paragraph cards */
+.para-card{
+  background:var(--card);
+  border:1.5px solid var(--rule2);
+  border-radius:10px;padding:14px 16px;
+  cursor:grab;user-select:none;
+  transition:all 0.18s;
+  position:relative;
+}
+.para-card:hover{
+  border-color:var(--purple-border);
+  background:var(--card2);
+}
+.para-card.dragging{
+  opacity:0.3;cursor:grabbing;
+}
+.para-card.ghost{
+  opacity:0;pointer-events:none;
+}
+.para-card-label{
+  font-family:'DM Mono',monospace;font-size:9px;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.drag-handle{
+  color:var(--ink3);font-size:13px;cursor:grab;
+  letter-spacing:-1px;
+}
+.para-card-text{
+  font-family:'Playfair Display',serif;
+  font-size:13px;line-height:1.75;color:var(--ink2);
+}
+.para-card-text em{font-style:italic;}
+.para-card-text .solo-line{
+  display:block;
+  font-style:italic;font-weight:700;
+  color:var(--purple);
+  font-size:15px;
+  margin:4px 0;
+}
+
+/* slots */
+.slot{
+  background:var(--slot-bg);
+  border:1.5px dashed var(--slot-border);
+  border-radius:10px;
+  min-height:80px;
+  padding:10px 14px;
+  transition:all 0.18s;
+  position:relative;
+  display:flex;flex-direction:column;
+  gap:8px;
+}
+.slot.drag-over{
+  border-color:var(--purple);
+  background:var(--purple-bg);
+}
+.slot.filled{
+  border-style:solid;
+  border-color:var(--rule2);
+  background:var(--card);
+  cursor:default;
+}
+.slot-num{
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink3);flex-shrink:0;
+}
+.slot-empty-hint{
+  font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--ink3);opacity:0.5;
+  display:flex;align-items:center;justify-content:center;
+  flex:1;min-height:40px;
+  letter-spacing:0.04em;
+}
+.slot-remove{
+  position:absolute;top:8px;right:10px;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--rule2);border:none;
+  color:var(--ink3);font-size:13px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;opacity:0;
+}
+.slot.filled:hover .slot-remove{opacity:1;}
+.slot-remove:hover{background:var(--red-bg);color:var(--red);}
+
+/* reveal states */
+.slot.correct-slot{border-color:rgba(125,232,160,0.4);border-style:solid;}
+.slot.wrong-slot{border-color:rgba(232,125,125,0.4);border-style:solid;}
+.slot.correct-slot .para-card{border-color:rgba(125,232,160,0.35);background:rgba(125,232,160,0.04);}
+.slot.wrong-slot .para-card{border-color:rgba(232,125,125,0.3);background:rgba(232,125,125,0.04);}
+
+.result-badge{
+  display:none;
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  font-family:'DM Mono',monospace;font-size:11px;
+  padding:3px 9px;border-radius:20px;
+}
+.slot.correct-slot .result-badge{display:flex;background:var(--green-bg);color:var(--green);}
+.slot.wrong-slot .result-badge{display:flex;background:var(--red-bg);color:var(--red);}
+
+/* ══════════════════════════════
+   REVEAL OVERLAY
+══════════════════════════════ */
+.reveal-overlay{
+  position:absolute;inset:0;
+  background:rgba(9,8,10,0.94);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  padding:24px 28px 32px;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.4s;
+  z-index:30;
+  gap:14px;
+}
+.reveal-overlay.show{opacity:1;pointer-events:all;}
+
+.reveal-top{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;gap:12px;
+}
+.reveal-score{
+  display:flex;align-items:baseline;gap:8px;
+}
+.reveal-score-big{
+  font-family:'Playfair Display',serif;
+  font-size:48px;font-weight:900;color:var(--purple);line-height:1;
+}
+.reveal-score-denom{
+  font-family:'Playfair Display',serif;
+  font-size:20px;color:var(--ink3);
+}
+.reveal-score-label{
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink3);margin-top:2px;
+}
+.continue-btn{
+  padding:11px 24px;
+  background:var(--purple);color:#09080a;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;
+  border:none;border-radius:8px;cursor:pointer;
+  transition:all 0.2s;flex-shrink:0;
+}
+.continue-btn:hover{background:#d4b8ff;}
+
+.reveal-heading{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;
+  margin-bottom:4px;flex-shrink:0;
+}
+
+/* reveal paragraphs */
+.reveal-list{
+  display:flex;flex-direction:column;gap:10px;
+}
+.reveal-para{
+  background:var(--card);border-radius:10px;
+  border:1px solid var(--rule);
+  padding:14px 18px;
+  display:grid;
+  grid-template-columns:32px 1fr;
+  gap:14px;
+  align-items:flex-start;
+}
+.reveal-para.correct-reveal{border-color:rgba(125,232,160,0.25);}
+.reveal-para.wrong-reveal{border-color:rgba(232,125,125,0.2);}
+.reveal-num-col{
+  display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:2px;
+}
+.reveal-num{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:900;
+  color:var(--purple);opacity:0.5;line-height:1;
+}
+.reveal-tick{
+  font-size:13px;font-family:'DM Mono',monospace;
+}
+.correct-reveal .reveal-tick{color:var(--green);}
+.wrong-reveal .reveal-tick{color:var(--red);}
+.reveal-body{}
+.reveal-para-text{
+  font-family:'Playfair Display',serif;
+  font-size:13px;line-height:1.7;
+  color:var(--ink2);margin-bottom:8px;
+}
+.reveal-para-text em{font-style:italic;}
+.reveal-para-text .solo-line{
+  display:block;font-style:italic;font-weight:700;
+  color:var(--purple);font-size:15px;margin:4px 0;
+}
+.reveal-explanation{
+  font-size:12px;line-height:1.7;color:var(--ink3);
+  border-left:2px solid var(--rule2);padding-left:10px;
+}
+.reveal-explanation strong{color:var(--ink2);font-weight:500;}
+.reveal-wrong-note{
+  margin-top:6px;
+  font-size:12px;color:var(--red);font-family:'DM Mono',monospace;
+  opacity:0.8;
+}
+
+/* notes reminder */
+.reveal-notes{
+  background:var(--gold-bg);border:1px solid var(--gold-border);
+  border-radius:10px;padding:14px 18px;flex-shrink:0;
+}
+.reveal-notes-head{
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px;
+}
+.reveal-notes-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.reveal-notes-list li{
+  font-size:12px;color:var(--ink2);
+  padding-left:14px;position:relative;line-height:1.6;
+}
+.reveal-notes-list li::before{content:'→';position:absolute;left:0;color:var(--gold);font-size:10px;}
+.reveal-notes-list li strong{color:var(--ink);}
+
+/* ══════════════════════════════
+   DRAG GHOST
+══════════════════════════════ */
+#drag-ghost{
+  position:fixed;
+  pointer-events:none;
+  z-index:1000;
+  opacity:0.9;
+  transform:rotate(2deg) scale(1.03);
+  max-width:280px;
+  display:none;
+  box-shadow:var(--drag-shadow);
+  border-radius:10px;
+}
+
+/* ══════════════════════════════
+   SCREEN 2 — FULL STORY
+══════════════════════════════ */
+#s2{
+  background:var(--bg);
+  align-items:center;
+  overflow-y:auto;padding:48px 24px;
+}
+.story-wrap{max-width:580px;width:100%;}
+.story-kicker{
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--purple);margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.story-kicker::before{content:'';width:20px;height:1px;background:var(--purple);opacity:0.5;}
+.story-title{
+  font-family:'Playfair Display',serif;
+  font-size:32px;font-weight:700;
+  margin-bottom:6px;
+}
+.story-byline{
+  font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--ink3);letter-spacing:0.06em;margin-bottom:36px;
+}
+.story-text{
+  font-family:'Playfair Display',serif;
+  font-size:16px;line-height:2.1;color:var(--ink);
+}
+.story-text p{margin-bottom:1.6em;}
+.story-text p.solo{
+  margin:2em 0;padding-left:20px;
+  border-left:2px solid var(--purple2);
+  font-style:italic;font-weight:600;
+  color:var(--purple);
+}
+.back-to-activity{
+  margin-top:36px;
+  padding:12px 24px;
+  background:transparent;color:var(--ink2);
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  border:1px solid var(--rule2);border-radius:8px;
+  cursor:pointer;transition:all 0.2s;
+}
+.back-to-activity:hover{background:var(--card);color:var(--ink);}
+
+@keyframes card-in{
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.card-in{animation:card-in 0.3s ease forwards;}
+</style>
+</head>
+<body>
+
+<!-- DRAG GHOST -->
+<div id="drag-ghost"></div>
+
+<!-- ══════════════════════════════
+     SCREEN 0 — INTRO
+══════════════════════════════ -->
+<div class="screen active" id="s0">
+<div class="intro-wrap">
+
+  <div class="game-kicker">Zone 2 · Story Sequencing</div>
+
+  <div class="game-title">
+    Put the Story Back
+    <em>The Fun They Had</em>
+  </div>
+
+  <div class="intro-body">
+    Five key paragraphs from "The Fun They Had" have been scrambled. <strong>Your job is to put them back in the order you think Asimov intended.</strong> There's no timer — read carefully. When you lock in your order, you'll see how close you got and why each paragraph sits exactly where it does.
+  </div>
+
+  <div class="how-cards">
+    <div class="how-card">
+      <div class="how-n">01</div>
+      <div class="how-text"><strong>Read all the paragraphs</strong> in the left column. Get a feel for what each one does before you start placing anything.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-n">02</div>
+      <div class="how-text"><strong>Drag each paragraph</strong> into the numbered slot on the right where you think it belongs in the story.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-n">03</div>
+      <div class="how-text"><strong>Changed your mind?</strong> Hit the × on any placed paragraph to return it to the bank and try again.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-n">04</div>
+      <div class="how-text">When all slots are filled, hit <strong>Check my order</strong> to see the reveal — every paragraph explained.</div>
+    </div>
+  </div>
+
+  <div class="para-count-strip">
+    <span>5 paragraphs to place</span>
+    <div class="para-pip"></div><div class="para-pip"></div><div class="para-pip"></div>
+    <div class="para-pip"></div><div class="para-pip"></div>
+  </div>
+
+  <button class="start-btn" onclick="goTo(1)">Start sequencing <span class="arr">→</span></button>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 1 — SEQUENCER
+══════════════════════════════ -->
+<div class="screen" id="s1">
+
+  <div class="seq-top">
+    <div class="seq-top-left">
+      <div class="seq-top-title">Put the Story Back</div>
+      <div class="seq-top-sub">Drag paragraphs into sequence →</div>
+    </div>
+    <div class="seq-top-right">
+      <button class="back-btn" onclick="goTo(0)">← Instructions</button>
+      <div class="placed-counter">
+        <div class="placed-pips" id="placed-pips"></div>
+        <span id="placed-label">0 / 5 placed</span>
+      </div>
+      <button class="check-btn" id="check-btn" onclick="checkOrder()">Check my order →</button>
+    </div>
+  </div>
+
+  <div class="seq-body">
+
+    <!-- LEFT: bank -->
+    <div class="bank-panel">
+      <div class="panel-header">
+        <div class="panel-header-title">Paragraph bank</div>
+        <div class="panel-header-sub">Drag any paragraph to a slot →</div>
+      </div>
+      <div class="bank-scroll" id="bank-scroll"></div>
+    </div>
+
+    <!-- RIGHT: slots -->
+    <div class="slots-panel">
+      <div class="panel-header">
+        <div class="panel-header-title">Your sequence</div>
+        <div class="panel-header-sub">Paragraph 1 at top → paragraph 5 at bottom</div>
+      </div>
+      <div class="slots-scroll" id="slots-scroll"></div>
+    </div>
+
+  </div>
+
+  <!-- REVEAL OVERLAY -->
+  <div class="reveal-overlay" id="reveal-overlay">
+    <div class="reveal-top">
+      <div>
+        <div class="reveal-heading">Asimov's order — revealed</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px;">
+          <div class="reveal-score-big" id="reveal-score-big"></div>
+          <div class="reveal-score-denom">/ 5</div>
+          <div style="display:flex;flex-direction:column;gap:2px;margin-left:6px;">
+            <div class="reveal-score-label">paragraphs in the right position</div>
+            <div id="reveal-score-caption" style="font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace;"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+        <button class="continue-btn" onclick="goTo(2)">Read the full story →</button>
+        <button onclick="resetActivity()" style="background:transparent;border:1px solid var(--rule2);color:var(--ink3);font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;">Try again ↩</button>
+      </div>
+    </div>
+
+    <div class="reveal-list" id="reveal-list"></div>
+
+    <div class="reveal-notes">
+      <div class="reveal-notes-head">★ Write in your Notes before you leave Zone 2</div>
+      <ul class="reveal-notes-list">
+        <li>Which paragraph was <strong>hardest to place</strong> — and why did it fool you?</li>
+        <li>Where did Asimov put <strong>"And the teachers were people."</strong> — and what does its position do to the story?</li>
+        <li>If you were Asimov, <strong>what would you change</strong> about the order? Defend it.</li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     SCREEN 2 — FULL STORY
+══════════════════════════════ -->
+<div class="screen" id="s2">
+<div class="story-wrap">
+  <div class="story-kicker">The complete story — in order</div>
+  <div class="story-title">The Fun They Had</div>
+  <div class="story-byline">Isaac Asimov, 1951</div>
+  <div class="story-text">
+    <p>Margie even wrote about it that night in her diary. On the page headed May 17, 2157, she wrote, "Today Tommy found a real book!"</p>
+    <p>It was a very old book. Margie's grandfather once said that when he was a little boy his grandfather told him that there was a time when all stories were printed on paper.</p>
+    <p>They turned the pages, which were yellow and crinkly, and it was awfully funny to read words that stood still instead of moving the way they were supposed to — on a screen, you know. And then, when they turned back to the page before, it had the same words on it that it had had when they read it the first time.</p>
+    <p>"Gee," said Tommy, "what a waste. When you're through with the book, you just throw it away, I guess. Our television screen must have had a million books on it and it's good for plenty more. I wouldn't throw it away."</p>
+    <p>"Same with mine," said Margie. She was eleven and hadn't seen as many telebooks as Tommy had. He was thirteen.</p>
+    <p>She said, "Where did you find it?"</p>
+    <p>"In my house." He pointed without looking, because he was busy reading. "In the attic."</p>
+    <p>"What's it about?"</p>
+    <p>"School."</p>
+    <p>Margie was scornful. "School? What's there to write about school? I hate school." Margie always hated school, but now she hated it more than ever. The mechanical teacher had been giving her test after test in geography and she had been doing worse and worse until her mother had sent for the County Inspector.</p>
+    <p>He was a round little man with a red face and a whole box of tools with dials and wires. He smiled at her and gave her an apple, then took the teacher apart. Margie had hoped he wouldn't know how to put it together again, but he knew how all right, and after an hour or so, there it was again, large and black and ugly, with a big screen on which all the lessons were shown and the questions were asked. That wasn't so bad. The part she hated most was the slot where she had to put homework and test papers. She always had to write them out in a punch code they made her learn when she was six years old, and the mechanical teacher calculated the marks in no time.</p>
+    <p>The Inspector had smiled after he was finished and patted her head. He said to her mother, "It's not the little girl's fault, Mrs. Jones. I think the geography sector was geared a little too quick. Those things happen sometimes. I've slowed it down to an average ten-year level. Actually, the overall pattern of her progress is quite satisfactory." And he patted Margie's head again.</p>
+    <p>Margie was disappointed. She had been hoping they would take the teacher away altogether. They had taken Tommy's teacher away for nearly a month once because the history sector had blanked out completely.</p>
+    <p>So she said to Tommy, "Why would anyone write a book about school?"</p>
+    <p>Tommy looked at her with very superior eyes. "Because it's not our kind of school, stupid. This is the old kind of school that they had hundreds and hundreds of years ago." He added loftily, pronouncing the word carefully, "Centuries ago."</p>
+    <p>Margie was hurt. "Well, I don't know what kind of school they had all that time ago." She read the book over his shoulder for a while, then said, "Anyway, they had a teacher."</p>
+    <p>"Sure they had a teacher, but it wasn't a regular teacher. It was a man."</p>
+    <p>"A man? How could a man be a teacher?"</p>
+    <p>"Well, he just told the boys and girls things and gave them homework and asked them questions."</p>
+    <p>"A man isn't smart enough."</p>
+    <p>"Sure he is. My father knows as much as my teacher."</p>
+    <p>"He can't. A man can't know as much as a teacher."</p>
+    <p>"He knows almost as much I betcha."</p>
+    <p>Margie wasn't prepared to dispute that. She said, "I wouldn't want a strange man in my house to teach me."</p>
+    <p>Tommy screamed with laughter, "You don't know much, Margie. The teacher didn't live in the house. They had a special building and all the kids went there."</p>
+    <p>"And all the kids learned the same thing?"</p>
+    <p>"Sure, if they were the same age."</p>
+    <p>"But my mother says a teacher has to be adjusted to fit the mind of each boy and girl it teaches and that each kid has to be taught differently."</p>
+    <p>"Just the same they did it that way then. If you don't like it, you don't have to read the book."</p>
+    <p>"I didn't say I didn't like it," Margie said quickly.</p>
+    <p>She wanted to read about those funny schools.</p>
+    <p>The mechanical teacher was flashing on the screen: "When we add the fractions 1/2 and 1/4—"</p>
+    <p>Margie was thinking about how the kids must have loved it. She was thinking about the fun they had.</p>
+    <p>Margie went into the schoolroom. It was right next to her bedroom, and the mechanical teacher was on and waiting for her. It was always on at the same time every day except Saturday and Sunday, because her mother said little girls learned better if they learned at regular hours.</p>
+    <p>Margie was thinking about the old schools they had when her grandfather's grandfather was a little boy. All the kids from the whole neighborhood came, laughing and shouting in the schoolyard, sitting together in the schoolroom, going home together at the end of the day. They learned the same things, so they could help one another on the homework and talk about it.</p>
+    <p class="solo">And the teachers were people.</p>
+  </div>
+  <button class="back-to-activity" onclick="goTo(1)">← Back to sequencer</button>
+</div>
+</div>
+
+<script>
+/* ════════════════════════════════
+   PARAGRAPH DATA
+   correctPosition = 1-indexed
+════════════════════════════════ */
+const PARAS = [
+  {
+    id:'p1',
+    correctPosition:1,
+    short:'Margie was scornful. "School?"…',
+    html:'Margie was scornful. "School? What\'s there to write about school? I hate school." Margie always hated school, but now she hated it more than ever. The mechanical teacher had been giving her test after test in geography and she had been doing worse and worse until her mother had sent for the County Inspector.',
+    explanation:'<strong>Asimov opens with Margie\'s scorn — and it sets the central irony immediately.</strong> She hates the subject of this book. By the last line of the story, she will be longing for it. That reversal only works if we start here, with her contempt. This paragraph also introduces the mechanical teacher for the first time, which everything else depends on.'
+  },
+  {
+    id:'p2',
+    correctPosition:2,
+    short:'He was a round little man…',
+    html:'He was a round little man with a red face and a whole box of tools with dials and wires. He smiled at her and gave her an apple, then took the teacher apart. Margie had hoped he wouldn\'t know how to put it together again, but he knew how all right, and after an hour or so, there it was again, large and black and ugly, with a big screen on which all the lessons were shown and the questions were asked.',
+    explanation:'<strong>The Inspector makes the mechanical teacher physically real — and sinister.</strong> "Large and black and ugly" — Asimov gives the machine a body so we feel its presence. More importantly, Margie hoped it couldn\'t be fixed. It was. Her helplessness is established here. This must follow the geography struggles; it\'s the consequence of them.'
+  },
+  {
+    id:'p3',
+    correctPosition:3,
+    short:'Tommy looked at her with very superior eyes…',
+    html:'Tommy looked at her with very superior eyes. "Because it\'s not our kind of school, stupid. This is the old kind of school that they had hundreds and hundreds of years ago." He added loftily, pronouncing the word carefully, "Centuries ago."\n\nMargie was hurt. "Well, I don\'t know what kind of school they had all that time ago." She read the book over his shoulder for a while, then said, "Anyway, they had a teacher."\n\n"Sure they had a teacher, but it wasn\'t a regular teacher. It was a man."\n\n"A man? How could a man be a teacher?"\n\nMargie wasn\'t prepared to dispute that. She said, "I wouldn\'t want a strange man in my house to teach me."\n\nTommy screamed with laughter. "You don\'t know much, Margie. The teacher didn\'t live in the house. They had a special building and all the kids went there."\n\nShe wanted to read about those funny schools.',
+    explanation:'<strong>This is where Margie\'s curiosity is born.</strong> She starts the conversation dismissive and ends it wanting to know more — "she wanted to read about those funny schools." That shift is essential. It has to come after she learns the Inspector can\'t save her, and before she enters the schoolroom. It\'s the hinge of the story: she moves from hating school to longing for a different kind.'
+  },
+  {
+    id:'p4',
+    correctPosition:4,
+    short:'"And the teachers were people."',
+    html:'<span class="solo-line">And the teachers were people.</span>',
+    explanation:'<strong>Five words. Its own paragraph. The story\'s thesis.</strong> Asimov places this completely alone — no sentence before it, nothing immediately after. Your reading speed drops to zero. The pause is the argument: the fact that teachers were human beings is so important it needs its own silence. Attached to any other paragraph, it becomes one detail among many. Standing alone, it is the whole story in a sentence. Students almost always attach it to something. Feeling that mistake is the lesson.'
+  },
+  {
+    id:'p5',
+    correctPosition:5,
+    short:'Margie went into the schoolroom…',
+    html:'Margie went into the schoolroom. It was right next to her bedroom, and the mechanical teacher was on and waiting for her. It was always on at the same time every day except Saturday and Sunday, because her mother said little girls learned better if they learned at regular hours.\n\nMargie was thinking about the old schools they had when her grandfather\'s grandfather was a little boy. All the kids from the whole neighborhood came, laughing and shouting in the schoolyard, sitting together in the schoolroom, going home together at the end of the day. They learned the same things, so they could help one another on the homework and talk about it.\n\nThe mechanical teacher was flashing on the screen: "When we add the fractions 1/2 and 1/4…" Margie was thinking about how the kids must have loved it. She was thinking about the fun they had.',
+    explanation:'<strong>The closing passage only works last — and only works after "And the teachers were people." has already landed.</strong> Everything in this passage has been earned: we know her school, her frustration, her new curiosity, and the weight of what human teaching meant. The fractions line is the machine\'s final indifference — it keeps going while she dreams. The title lands in the very last sentence. Nothing in this story comes after this.'
+  }
+];
+
+/* shuffled order for display */
+let bankOrder = [];
+/* what is in each slot: array of 9, each null or paraId */
+let slots = Array(5).fill(null);
+
+/* ════════════════════════════════
+   NAVIGATION
+════════════════════════════════ */
+function goTo(n){
+  document.querySelectorAll('.screen').forEach((s,i)=>s.classList.toggle('active',i===n));
+}
+
+/* ════════════════════════════════
+   INIT / RESET
+════════════════════════════════ */
+function init(){
+  bankOrder = [...PARAS].sort(()=>Math.random()-0.5).map(p=>p.id);
+  slots = Array(5).fill(null);
+  document.getElementById('reveal-overlay').classList.remove('show');
+  renderBank();
+  renderSlots();
+  renderPips();
+  document.getElementById('check-btn').classList.remove('ready');
+}
+
+function resetActivity(){
+  document.getElementById('reveal-overlay').classList.remove('show');
+  init();
+}
+
+/* ════════════════════════════════
+   RENDER BANK
+════════════════════════════════ */
+function renderBank(){
+  const scroll = document.getElementById('bank-scroll');
+  scroll.innerHTML='';
+  const inBank = bankOrder.filter(id=>!slots.includes(id));
+  if(inBank.length===0){
+    scroll.innerHTML=`<div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);padding:12px 4px;">All paragraphs placed — hit Check my order when ready.</div>`;
+    return;
+  }
+  inBank.forEach((id,i)=>{
+    const p=PARAS.find(x=>x.id===id);
+    const card=makeCard(p);
+    card.style.animationDelay=(i*0.04)+'s';
+    card.classList.add('card-in');
+    scroll.appendChild(card);
+  });
+}
+
+function makeCard(p){
+  const card=document.createElement('div');
+  card.className='para-card';
+  card.dataset.id=p.id;
+  card.innerHTML=`
+    <div class="para-card-label"><span class="drag-handle">⠿⠿</span>Paragraph</div>
+    <div class="para-card-text">${p.html}</div>`;
+  addDragListeners(card,p.id);
+  return card;
+}
+
+/* ════════════════════════════════
+   RENDER SLOTS
+════════════════════════════════ */
+function renderSlots(){
+  const scroll=document.getElementById('slots-scroll');
+  scroll.innerHTML='';
+  slots.forEach((paraId,i)=>{
+    const slot=document.createElement('div');
+    slot.className='slot'+(paraId?' filled':'');
+    slot.dataset.slot=i;
+
+    const numEl=document.createElement('div');
+    numEl.className='slot-num';
+    numEl.textContent=`Paragraph ${i+1}`;
+    slot.appendChild(numEl);
+
+    if(paraId){
+      const p=PARAS.find(x=>x.id===paraId);
+      const card=makeCard(p);
+      card.draggable=false;
+      // override drag to do nothing when in slot — use remove btn instead
+      card.style.cursor='default';
+      slot.appendChild(card);
+
+      const removeBtn=document.createElement('button');
+      removeBtn.className='slot-remove';
+      removeBtn.title='Return to bank';
+      removeBtn.innerHTML='×';
+      removeBtn.onclick=(e)=>{e.stopPropagation();returnToBank(i);};
+      slot.appendChild(removeBtn);
+
+      const badge=document.createElement('div');
+      badge.className='result-badge';
+      slot.appendChild(badge);
+    } else {
+      const hint=document.createElement('div');
+      hint.className='slot-empty-hint';
+      hint.textContent='drop here';
+      slot.appendChild(hint);
+
+      slot.addEventListener('dragover',e=>{e.preventDefault();slot.classList.add('drag-over');});
+      slot.addEventListener('dragleave',()=>slot.classList.remove('drag-over'));
+      slot.addEventListener('drop',e=>{
+        e.preventDefault();
+        slot.classList.remove('drag-over');
+        const id=e.dataTransfer.getData('text/plain');
+        if(id) placeInSlot(id,i);
+      });
+    }
+    scroll.appendChild(slot);
+  });
+}
+
+/* ════════════════════════════════
+   PIPS
+════════════════════════════════ */
+function renderPips(){
+  const placed=slots.filter(Boolean).length;
+  const pips=document.getElementById('placed-pips');
+  pips.innerHTML='';
+  for(let i=0;i<5;i++){
+    const p=document.createElement('div');
+    p.className='placed-pip'+(i<placed?' filled':'');
+    pips.appendChild(p);
+  }
+  document.getElementById('placed-label').textContent=`${placed} / 5 placed`;
+  const btn=document.getElementById('check-btn');
+  btn.classList.toggle('ready',placed===5);
+}
+
+/* ════════════════════════════════
+   PLACE / RETURN
+════════════════════════════════ */
+function placeInSlot(id,slotIdx){
+  if(slots[slotIdx]) return;
+  // remove from any other slot just in case
+  slots=slots.map(s=>s===id?null:s);
+  slots[slotIdx]=id;
+  renderBank();
+  renderSlots();
+  renderPips();
+}
+
+function returnToBank(slotIdx){
+  slots[slotIdx]=null;
+  renderBank();
+  renderSlots();
+  renderPips();
+}
+
+/* ════════════════════════════════
+   DRAG (mouse + touch)
+════════════════════════════════ */
+let draggingId=null;
+let ghost=document.getElementById('drag-ghost');
+
+function addDragListeners(card,id){
+  card.draggable=true;
+  card.addEventListener('dragstart',e=>{
+    draggingId=id;
+    e.dataTransfer.setData('text/plain',id);
+    setTimeout(()=>card.classList.add('dragging'),0);
+  });
+  card.addEventListener('dragend',()=>{
+    card.classList.remove('dragging');
+    draggingId=null;
+  });
+
+  // Touch
+  card.addEventListener('touchstart',e=>{
+    draggingId=id;
+    const t=e.touches[0];
+    ghost.innerHTML=card.innerHTML;
+    ghost.style.display='block';
+    ghost.style.left=(t.clientX-120)+'px';
+    ghost.style.top=(t.clientY-40)+'px';
+    ghost.style.width=card.offsetWidth+'px';
+    ghost.className=card.className;
+    ghost.style.position='fixed';
+    card.classList.add('ghost');
+  },{passive:true});
+
+  card.addEventListener('touchmove',e=>{
+    if(!draggingId)return;
+    const t=e.touches[0];
+    ghost.style.left=(t.clientX-120)+'px';
+    ghost.style.top=(t.clientY-40)+'px';
+    // highlight slot under finger
+    document.querySelectorAll('.slot').forEach(s=>s.classList.remove('drag-over'));
+    const el=document.elementFromPoint(t.clientX,t.clientY);
+    const sl=el&&el.closest('.slot:not(.filled)');
+    if(sl) sl.classList.add('drag-over');
+  },{passive:true});
+
+  card.addEventListener('touchend',e=>{
+    ghost.style.display='none';
+    card.classList.remove('ghost');
+    document.querySelectorAll('.slot').forEach(s=>s.classList.remove('drag-over'));
+    const t=e.changedTouches[0];
+    const el=document.elementFromPoint(t.clientX,t.clientY);
+    const sl=el&&el.closest('.slot:not(.filled)');
+    if(sl&&draggingId){
+      const idx=parseInt(sl.dataset.slot);
+      placeInSlot(draggingId,idx);
+    }
+    draggingId=null;
+  },{passive:true});
+}
+
+/* ════════════════════════════════
+   CHECK ORDER
+════════════════════════════════ */
+function checkOrder(){
+  if(slots.some(s=>!s)) return;
+
+  let correct=0;
+  // mark slots
+  slots.forEach((id,i)=>{
+    const p=PARAS.find(x=>x.id===id);
+    const slotEl=document.querySelectorAll('.slot')[i];
+    const isCorrect=p.correctPosition===(i+1);
+    if(isCorrect) correct++;
+    slotEl.classList.add(isCorrect?'correct-slot':'wrong-slot');
+    const badge=slotEl.querySelector('.result-badge');
+    if(badge) badge.textContent=isCorrect?'✓ correct':'✗ move it';
+    // disable remove button
+    const rb=slotEl.querySelector('.slot-remove');
+    if(rb) rb.style.display='none';
+  });
+
+  // build reveal
+  buildReveal(correct);
+  setTimeout(()=>{
+    document.getElementById('reveal-overlay').classList.add('show');
+  },600);
+}
+
+function buildReveal(correct){
+  document.getElementById('reveal-score-big').textContent=correct;
+  const captions=['Keep reading the explanations — understanding why is the whole point.',
+    'One right. The hardest one to place is paragraph 4 — did it fool you? Read why.',
+    'Two right. You\'re developing structural instinct. The ones you missed are worth studying.',
+    'Three right. Solid — you feel how narrative sequencing works.',
+    'Four right. Strong. Find the one you missed and read its explanation carefully.',
+    'Perfect. You placed all five exactly as Asimov did.'];
+  document.getElementById('reveal-score-caption').textContent=captions[correct]||'';
+
+  const list=document.getElementById('reveal-list');
+  list.innerHTML='';
+
+  // show in correct order
+  PARAS.forEach((p,i)=>{
+    // find where student placed this para
+    const studentPos=slots.indexOf(p.id)+1;
+    const isCorrect=studentPos===(i+1);
+
+    const row=document.createElement('div');
+    row.className='reveal-para '+(isCorrect?'correct-reveal':'wrong-reveal');
+    row.innerHTML=`
+      <div class="reveal-num-col">
+        <div class="reveal-num">${i+1}</div>
+        <div class="reveal-tick">${isCorrect?'✓':'✗'}</div>
+      </div>
+      <div class="reveal-body">
+        <div class="reveal-para-text">${p.html}</div>
+        <div class="reveal-explanation">${p.explanation}</div>
+        ${!isCorrect?`<div class="reveal-wrong-note">You placed this at position ${studentPos}</div>`:''}
+      </div>`;
+    list.appendChild(row);
+  });
+}
+
+/* ════════════════════════════════
+   BOOT
+════════════════════════════════ */
+init();
+</script>
+</body>
+</html>
